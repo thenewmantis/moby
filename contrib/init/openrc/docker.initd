@@ -13,7 +13,17 @@ start_stop_daemon_args="--background \
 
 extra_started_commands="reload"
 
-rc_ulimit="${DOCKER_ULIMIT:--c unlimited -n 1048576 -u unlimited}"
+rc_ulimit=""
+RC_ULIMIT=""
+if [ "$1" = "start" ]; then
+    if [ $BASH ]; then
+        rc_ulimit="${DOCKER_ULIMIT:--c unlimited -n 1048576 -u unlimited}"
+    else
+        ulimit -c unlimited
+        ulimit -n 1048576
+        ulimit -p unlimited
+    fi
+fi
 
 retry="${DOCKER_RETRY:-TERM/60/KILL/10}"
 
